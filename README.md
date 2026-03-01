@@ -6,8 +6,6 @@
 [![Security Scan](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/security-scan.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/security-scan.yml)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/enthropic-spec/enthropic-tools/badge)](https://securityscorecards.dev/viewer/?uri=github.com/enthropic-spec/enthropic-tools)
 [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://slsa.dev)
-[![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
-[![Rust 1.75+](https://img.shields.io/badge/rust-1.75+-orange.svg)](https://www.rust-lang.org)
 
 CLI for the [Enthropic](https://github.com/enthropic-spec/enthropic) specification.  
 Single binary. No runtime dependencies. True spec-driven development.
@@ -156,3 +154,8 @@ The encryption key is in `~/.enthropic/[name].key` (chmod 600). Neither is ever 
 ## Spec
 
 The `.enth` format is defined in [enthropic/SPEC.md](https://github.com/Enthropic-spec/enthropic/blob/main/SPEC.md).
+
+---
+
+[![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
+[![Rust 1.75+](https://img.shields.io/badge/rust-1.75+-orange.svg)](https://www.rust-lang.org)
