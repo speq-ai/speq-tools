@@ -151,6 +151,16 @@ The encryption key is in `~/.enthropic/[name].key` (chmod 600). Neither is ever 
 | Encryption key | `~/.enthropic/[name].key` chmod 600 | ❌ never |
 | API key (BYOK) | `~/.enthropic/global.keys` encrypted | ❌ never |
 
+## Roadmap
+
+| Milestone | What |
+|---|---|
+| **v0.1.0** ✅ | Parser · validator · full CLI · MCP server · encrypted vault · SLSA Level 3 · hardened CI |
+| **v0.2.0** | Docker image signed with cosign → `ghcr.io` · pre-built binaries (macOS · Linux · Windows) · Homebrew tap · SBOM on every release · `enthropic verify` |
+| **v0.3.0** | VS Code extension (syntax highlight + validate on save) · `enthropic lint` · LSP server |
+| **v0.4.0** | `SECURITY` block support — validator enforces auth/CORS/rate-limit declarations · CVE checks on `DEPS` · security context injected into every AI build session |
+| **v0.5.0+** | Template library · `enthropic init --template api\|saas\|cli` · community recipe collection |
+
 ## Spec
 
 The `.enth` format is defined in [enthropic/SPEC.md](https://github.com/Enthropic-spec/enthropic/blob/main/SPEC.md).
@@ -158,4 +168,4 @@ The `.enth` format is defined in [enthropic/SPEC.md](https://github.com/Enthropi
 ---
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
-[![Rust 1.80+](https://img.shields.io/badge/rust-1.80+-orange.svg)](https://www.rust-lang.org)
+[![Rust 1.85+](https://img.shields.io/badge/rust-1.85+-orange.svg)](https://www.rust-lang.org)
