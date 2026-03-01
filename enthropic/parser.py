@@ -98,7 +98,10 @@ def parse(path: Path) -> EnthSpec:
         if tok.startswith("VERSION "):
             spec.version = tok[8:].strip()
             i += 1
-        elif tok == "PROJECT":
+        elif tok == "PROJECT" or tok.startswith("PROJECT "):
+            if tok.startswith("PROJECT "):
+                # inline identifier: PROJECT myname → use as NAME if not overridden later
+                spec.project.setdefault("NAME", tok[8:].strip())
             i = _parse_project(lines, i + 1, spec)
         elif tok == "VOCABULARY":
             i = _parse_vocabulary(lines, i + 1, spec)
