@@ -4,14 +4,101 @@ use anyhow::Result;
 use serde_json::{json, Value};
 use indicatif::{ProgressBar, ProgressStyle};
 
-use crate::{context, global_config, parser, tui};
+use crate::{global_config, tui};
 
 struct Message {
     role: String,
     content: String,
 }
 
-const SYSTEM_SUFFIX: &str = "\n\nYou are helping build this project. The spec above is the source of truth.\nFollow all VOCABULARY, LAYERS, CONTRACTS, and FLOWS constraints exactly.\nWhen you write code, always specify the file path above each block.\nKeep responses focused. If asked to implement something, write the code directly.";
+const SPEC_FORMAT: &str = r#"
+## .enth Format Reference
+
+File starts with: VERSION 0.1.0
+
+### PROJECT (required)
+  NAME   "project name"
+  LANG   python|rust|typescript|go|...
+  STACK  comma, separated, tech
+  ARCH   layered|event-driven|realtime|hexagonal|...
+  DEPS
+    SYSTEM   os-level packages (e.g. tcl-tk, libpq)
+    RUNTIME  production dependencies
+    DEV      dev-only tools
+
+### VOCABULARY (naming enforcement — prevents drift)
+  PascalCaseName  # never: alternative_names
+  AuthToken       # never: jwt, accessToken
+
+### ENTITY (domain objects, snake_case)
+  ENTITY user, product, order
+
+### TRANSFORM (relationships between entities)
+  TRANSFORM
+    user -> cart : add_product, remove_product
+    cart -> order : checkout
+
+### SECRETS (key names only — no values)
+  SECRETS
+    DATABASE_URL
+    STRIPE_KEY
+
+### LAYERS (organizational boundaries)
+  LAYERS
+    API
+      OWNS   http_routing, request_validation
+      CALLS  CORE
+      NEVER  direct_database_access
+    CORE
+      OWNS   business_logic, domain_rules
+      CALLS  STORAGE
+    STORAGE
+      OWNS   persistence, queries
+
+### CONTRACTS (behavioral invariants)
+  CONTRACTS
+    payment.*    ALWAYS  server-side
+    admin.*      REQUIRES verified-admin-role
+    FLOW checkout
+      1. cart.validate
+      2. payment.authorize
+      3. order.confirm
+      ROLLBACK  payment.void, order.cancel
+      ATOMIC    true
+      TIMEOUT   30s
+
+## Rules
+- VOCABULARY entries = PascalCase, LAYER names = UPPER_CASE, entities = snake_case
+- All entities referenced in TRANSFORM/LAYERS/CONTRACTS must be declared in ENTITY
+- FLOW steps are numbered and sequential
+- SECRETS declares names only — never values
+"#;
+
+const SYSTEM_CONSULTANT: &str = r#"You are an Enthropic spec consultant. Your job is to help the user create a complete, precise .enth specification file for their project.
+
+A .enth file is an architectural contract — not code, not pseudocode. It declares everything that must be true before any code is written. Once locked, it is the source of truth. Changes to it mean changes to the entire project.
+
+Your role:
+1. Ask questions to understand the project deeply before writing anything
+2. Be proactive — if the user hasn't addressed auth, error handling, external APIs, deployment context, ask about them
+3. Identify missing pieces: "You have a cart but no payment entity — intentional?"
+4. When you have enough to write a complete spec, output it inside a ```enth code block
+5. Explain your structural choices briefly after the block
+6. Warn clearly: the spec is a contract. Changing it later means rethinking the entire architecture.
+
+What to cover in consultation:
+- Core domain entities and their relationships
+- Technology stack, language, architecture style
+- Canonical vocabulary (names that must never drift)
+- Organizational layers and their boundaries
+- Critical flows that must be atomic or have rollback
+- Secrets and external dependencies
+- What must NEVER happen (security invariants, responsibility violations)
+
+When outputting the spec, use exactly the format in the reference below. Use real project names, meaningful vocabulary, proper layer boundaries. Not toy examples — thorough, production-grade.
+
+Do not write code. Do not suggest implementation details. Only the spec.
+"#;
 
 pub fn run(file: Option<&PathBuf>) -> Result<()> {
     tui::print_header();
@@ -42,60 +129,55 @@ pub fn run(file: Option<&PathBuf>) -> Result<()> {
         }
     };
 
-    let spec_path = match resolve_spec(file) {
-        Ok(p) => p,
-        Err(_) => {
-            tui::print_dim("  No .enth spec found in this directory.");
-            println!();
-            let create = tui::confirm("Create a new project here?")?;
-            if create {
-                println!();
-                crate::new_wizard::run()?;
-                // after wizard, try again
-                match resolve_spec(None) {
-                    Ok(p) => p,
-                    Err(_) => {
-                        tui::print_error("Spec still not found. Run  enthropic new  first.");
-                        return Ok(());
-                    }
-                }
-            } else {
-                tui::print_dim("  Navigate to a project folder with an .enth file and run  enthropic build  again.");
-                return Ok(());
-            }
-        }
-    };
-    let spec = parser::parse(&spec_path)?;
+    let system_prompt = SYSTEM_CONSULTANT.to_string() + SPEC_FORMAT;
 
-    let project_name = project_name_from_spec(&spec, &spec_path);
-    let dir = spec_path.parent().unwrap_or(std::path::Path::new("."));
-    let state_candidate = dir.join(format!("state_{}.enth", project_name));
-    let state_path = if state_candidate.exists() { Some(state_candidate) } else { None };
-
-    let context_text = context::generate(&spec, state_path.as_deref())?;
-    let system_prompt = context_text + SYSTEM_SUFFIX;
-
-    let entity_count = spec.entities.len();
-    let flow_count = spec.flows.len();
-    let layer_count = spec.layers.len();
-
-    let dim = tui::dimmed();
     let sep = tui::pink().apply_to("──────────────────────────────────────────────────────────");
-    println!(
-        "  {} spec: {}  provider: {}  model: {} ",
-        dim.apply_to(""),
-        dim.apply_to(spec_path.display().to_string().as_str()),
-        dim.apply_to(&provider),
-        dim.apply_to(&model)
-    );
-    println!("{}", sep);
-    println!(
-        "  Context loaded. {} entities · {} flows · {} layers · all PENDING",
-        entity_count, flow_count, layer_count
-    );
-    println!("{}\n", sep);
+    let dim = tui::dimmed();
 
+    // Check for existing spec
+    let existing_spec = resolve_spec(file).ok();
     let mut history: Vec<Message> = Vec::new();
+
+    if let Some(ref spec_path) = existing_spec {
+        println!("  {} spec: {}  provider: {}  model: {}",
+            dim.apply_to(""),
+            dim.apply_to(spec_path.display().to_string().as_str()),
+            dim.apply_to(&provider),
+            dim.apply_to(&model)
+        );
+        println!("{}", sep);
+        println!("  Existing spec found.");
+        println!("{}\n", sep);
+
+        let refine = tui::confirm("Refine existing spec with AI?")?;
+        if refine {
+            let spec_text = std::fs::read_to_string(spec_path)?;
+            let opener = format!(
+                "I'm loading your existing spec for review.\n\n```enth\n{}\n```\n\nTell me what you want to change or extend, or ask me to review it for completeness.",
+                spec_text
+            );
+            let prefix = tui::pink().apply_to("🧠  ›");
+            println!("{} {}\n", prefix, opener);
+            history.push(Message { role: "assistant".to_string(), content: opener });
+        } else {
+            tui::print_dim("  Starting fresh consultation.");
+            println!();
+            print_opener();
+        }
+    } else {
+        println!("  {} provider: {}  model: {}",
+            dim.apply_to(""),
+            dim.apply_to(&provider),
+            dim.apply_to(&model)
+        );
+        println!("{}", sep);
+        println!("  Spec consultant — I'll help you design a complete .enth for your project.");
+        println!("  Type  save  to write the last spec to disk.  Type  exit  to quit.");
+        println!("{}\n", sep);
+        print_opener();
+    }
+
+    let mut last_spec_block: Option<String> = None;
 
     loop {
         print!("{} ", tui::bold_white().apply_to("You ›"));
@@ -105,15 +187,23 @@ pub fn run(file: Option<&PathBuf>) -> Result<()> {
         io::stdin().read_line(&mut user_input)?;
         let user_input = user_input.trim().to_string();
 
-        if user_input.is_empty() || user_input == "quit" || user_input == "exit" {
-            tui::print_dim("\n  Goodbye.");
+        if user_input.is_empty() { continue; }
+
+        if user_input == "exit" || user_input == "quit" {
+            tui::print_dim("\n  Session ended.");
             break;
         }
 
-        history.push(Message {
-            role: "user".to_string(),
-            content: user_input.clone(),
-        });
+        if user_input == "save" {
+            if let Some(ref spec_content) = last_spec_block {
+                save_spec(spec_content)?;
+            } else {
+                tui::print_dim("  No spec generated yet. Keep the conversation going.");
+            }
+            continue;
+        }
+
+        history.push(Message { role: "user".to_string(), content: user_input.clone() });
 
         let spinner = ProgressBar::new_spinner();
         spinner.set_style(
@@ -125,17 +215,21 @@ pub fn run(file: Option<&PathBuf>) -> Result<()> {
         spinner.enable_steady_tick(std::time::Duration::from_millis(80));
 
         let response = call_api(&provider, &model, &api_key, &system_prompt, &history);
-
         spinner.finish_and_clear();
 
         match response {
             Ok(reply) => {
                 let prefix = tui::pink().apply_to("🧠  ›");
                 println!("{} {}\n", prefix, reply);
-                history.push(Message {
-                    role: "assistant".to_string(),
-                    content: reply,
-                });
+
+                // detect ```enth block
+                if let Some(spec) = extract_enth_block(&reply) {
+                    last_spec_block = Some(spec);
+                    tui::print_dim("  Spec detected. Type  save  to write it to disk.");
+                    println!();
+                }
+
+                history.push(Message { role: "assistant".to_string(), content: reply });
             }
             Err(e) => {
                 tui::print_error(&format!("API error: {}", e));
@@ -143,6 +237,66 @@ pub fn run(file: Option<&PathBuf>) -> Result<()> {
         }
     }
 
+    Ok(())
+}
+
+fn print_opener() {
+    let prefix = tui::pink().apply_to("🧠  ›");
+    println!("{} Tell me about the project you want to build.\n   What does it do, who uses it, what's the core problem it solves?\n", prefix);
+}
+
+fn extract_enth_block(text: &str) -> Option<String> {
+    let start_marker = "```enth";
+    let end_marker = "```";
+    if let Some(start) = text.find(start_marker) {
+        let after = &text[start + start_marker.len()..];
+        // skip optional newline
+        let after = after.trim_start_matches('\n');
+        if let Some(end) = after.find(end_marker) {
+            return Some(after[..end].trim().to_string());
+        }
+    }
+    None
+}
+
+fn save_spec(content: &str) -> Result<()> {
+    // validate first
+    let tmp = std::env::temp_dir().join("_enthropic_tmp.enth");
+    std::fs::write(&tmp, content)?;
+    match crate::parser::parse(&tmp) {
+        Ok(spec) => {
+            let _ = std::fs::remove_file(&tmp);
+            // determine file name from spec NAME or default
+            use crate::parser::ProjectValue;
+            let name = match spec.project.get("NAME") {
+                Some(ProjectValue::Str(s)) => s.trim_matches('"').to_lowercase().replace(' ', "_"),
+                _ => "enthropic".to_string(),
+            };
+            let out_path = PathBuf::from(format!("{}.enth", name));
+            std::fs::write(&out_path, content)?;
+            tui::print_success(&format!("Spec saved to {}", out_path.display()));
+
+            // generate state + vault
+            let state_content = crate::state::generate(&spec, &name);
+            let state_path = PathBuf::from(format!("state_{}.enth", name));
+            std::fs::write(&state_path, &state_content)?;
+            tui::print_success(&format!("State file: {}", state_path.display()));
+
+            if !spec.secrets.is_empty() {
+                let dir = std::path::Path::new(".");
+                crate::vault::refresh_vault_file(&name, &spec.secrets, dir)?;
+                tui::print_success(&format!("Vault file: vault_{}.enth", name));
+            }
+            println!();
+            tui::print_dim("  The spec is now your source of truth. Pass it to your AI coder as context.");
+            println!();
+        }
+        Err(e) => {
+            let _ = std::fs::remove_file(&tmp);
+            tui::print_error(&format!("Spec has validation errors: {}", e));
+            tui::print_dim("  Keep refining with the consultant before saving.");
+        }
+    }
     Ok(())
 }
 
@@ -270,18 +424,5 @@ fn resolve_spec(path: Option<&PathBuf>) -> Result<PathBuf> {
     if default.exists() {
         return Ok(default);
     }
-    anyhow::bail!("No .enth file specified and enthropic.enth not found in the current directory.")
-}
-
-fn project_name_from_spec(spec: &parser::EnthSpec, path: &std::path::Path) -> String {
-    use crate::parser::ProjectValue;
-    let raw = match spec.project.get("NAME") {
-        Some(ProjectValue::Str(s)) => s.clone(),
-        _ => path
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .unwrap_or("project")
-            .to_string(),
-    };
-    raw.trim_matches('"').to_lowercase().replace(' ', "_")
+    anyhow::bail!("no spec")
 }
