@@ -1,2 +1,4 @@
 /target
 .env
+vault_*.enth
+state_*.enth

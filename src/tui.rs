@@ -39,7 +39,7 @@ pub fn print_header() {
     }
     println!(
         "🧠  {}          {}",
-        dimmed().apply_to("spec-driven development"),
+        dimmed().apply_to("true spec-driven development"),
         dimmed().apply_to("v0.1.0")
     );
     println!("{}", p.apply_to(SEPARATOR));

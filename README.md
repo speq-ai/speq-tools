@@ -1,7 +1,12 @@
 ![enthropic](assets/banner.svg)
 
-CLI for the [Enthropic](https://github.com/Enthropic-spec/enthropic) specification.  
-Single binary. No runtime dependencies.
+[![CI](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/codeql.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/codeql.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
+[![Rust 2021](https://img.shields.io/badge/rust-2021-orange.svg)](https://www.rust-lang.org)
+
+CLI for the [Enthropic](https://github.com/enthropic-spec/enthropic) specification.  
+Single binary. No runtime dependencies. True spec-driven development.
 
 ## Install
 
@@ -18,7 +23,7 @@ cargo install --git https://github.com/Enthropic-spec/enthropic-tools
 enthropic setup         # one-time: store your API key encrypted
 enthropic new           # guided wizard → creates enthropic.enth
 enthropic validate      # validate spec → auto-creates state + vault + .gitignore
-enthropic build         # AI chat with your spec pre-loaded as context
+enthropic build         # AI spec consultant → design your .enth through conversation
 ```
 
 ## Commands
