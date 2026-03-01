@@ -1,0 +1,98 @@
+VERSION 1.0
+
+PROJECT enthropic-tools
+  NAME   "enthropic"
+  STACK  rust, clap, dialoguer, console, reqwest, chacha20poly1305, serde_json
+  ARCH   layered
+  LANG   rust
+
+  DEPS
+    RUNTIME  clap, dialoguer, console, indicatif, reqwest, chacha20poly1305, rand, serde, serde_json, anyhow
+    DEV      cargo-test
+
+CONTEXT
+  DESCRIPTION "CLI toolkit for the Enthropic spec format. Validates .enth files, manages build state, stores secrets encrypted, and provides an AI chat session with the spec as context."
+
+VOCABULARY
+  EnthSpec          # never: spec, parsed_spec, enth
+  ValidationError   # never: error, err, validation_err
+  ProjectState      # never: state, build_state, progress
+  VaultEntry        # never: secret, cred, env_var
+  GlobalConfig      # never: config, settings, prefs, cfg
+  AiSession         # never: chat, conversation, session
+  TickEngine        # reserved — not used in this project
+
+ENTITY enth_spec, validation_error, project_state, vault_entry, global_config, ai_session
+
+TRANSFORM
+  enth_spec      -> validation_error : validate
+  enth_spec      -> project_state    : generate
+  enth_spec      -> ai_session       : build_context
+  global_config  -> ai_session       : configure
+  vault_entry    -> project_state    : sync_status
+
+LAYERS
+  CLI
+    OWNS    command_dispatch, user_input, output_formatting, tui_rendering
+    CALLS   CORE, STORAGE, AI
+    NEVER   direct_file_parsing
+    NEVER   encryption
+
+  CORE
+    OWNS    spec_parsing, validation, state_generation, context_generation
+    CALLS   STORAGE
+    NEVER   terminal_output
+    NEVER   api_calls
+    NEVER   encryption
+
+  STORAGE
+    OWNS    vault_encryption, global_key_management, file_persistence
+    NEVER   terminal_output
+    NEVER   api_calls
+    NEVER   spec_parsing
+
+  AI
+    OWNS    api_communication, prompt_construction, response_streaming
+    CALLS   CORE, STORAGE
+    NEVER   file_writing
+    NEVER   encryption
+
+CONTRACTS
+  vault_entry.*        NEVER    plaintext_on_disk
+  global_config.*      NEVER    api_key_in_plaintext
+  ai_session.*         REQUIRES valid_enth_spec
+  validation_error.*   ALWAYS   includes_rule_number
+  project_state.*      NEVER    overwrite_built_entity
+
+  FLOW setup
+    1. global_config.check_existing
+    2. global_config.select_provider
+    3. global_config.input_api_key
+    4. global_config.select_model
+    5. global_config.encrypt_and_store
+    ATOMIC  true
+    TIMEOUT 60s
+
+  FLOW new_project
+    1. enth_spec.collect_name
+    2. enth_spec.collect_stack
+    3. enth_spec.collect_entities
+    4. enth_spec.collect_layers
+    5. enth_spec.collect_secrets
+    6. enth_spec.write_file
+    7. validation_error.validate
+    8. project_state.generate
+    ROLLBACK  enth_spec.delete_partial_file
+    ATOMIC    false
+    TIMEOUT   120s
+
+  FLOW build_session
+    1. enth_spec.load
+    2. project_state.load
+    3. ai_session.build_context
+    4. ai_session.send_system_prompt
+    5. ai_session.repl_loop
+    ATOMIC  false
+
+SECRETS
+  # no project-level secrets — the tool manages others' secrets, not its own

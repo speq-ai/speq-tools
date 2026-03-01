@@ -12,7 +12,8 @@ const LOGO: &str = r#"              __  __                     _
 const SEPARATOR: &str = "──────────────────────────────────────────────────────────────";
 
 pub fn pink() -> Style {
-    Style::new().color256(218)
+    // 219 = #ffafff — soft pink/rose, 211 = #ff87af — deeper pink
+    Style::new().color256(219)
 }
 
 pub fn dimmed() -> Style {
