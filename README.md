@@ -1,4 +1,4 @@
-# enthropic-tools
+![enthropic](assets/banner.svg)
 
 CLI for the [Enthropic](https://github.com/Enthropic-spec/enthropic) specification.  
 Single binary. No runtime dependencies.

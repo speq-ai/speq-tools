@@ -1,0 +1,20 @@
+<svg width="840" height="160" viewBox="0 0 840 160" xmlns="http://www.w3.org/2000/svg">
+  <rect width="840" height="160" fill="#0f0f1a" rx="12"/>
+
+  <!-- ASCII logo — slant font, monospace, pink -->
+  <text font-family="'Courier New', 'Lucida Console', monospace" font-size="13" fill="#ffafff" xml:space="preserve">
+    <tspan x="28" y="30">              __  __                     _     </tspan>
+    <tspan x="28" dy="17">  ___  ____  / /_/ /_  _________  ____  (_)____</tspan>
+    <tspan x="28" dy="17"> / _ \/ __ \/ __/ __ \/ ___/ __ \/ __ \/ / ___/</tspan>
+    <tspan x="28" dy="17">/  __/ / / / /_/ / / / /  / /_/ / /_/ / / /__  </tspan>
+    <tspan x="28" dy="17">\___/_/ /_/\__/_/ /_/_/   \____/ .___/_/\___/  </tspan>
+    <tspan x="28" dy="17">                              /_/              </tspan>
+  </text>
+
+  <!-- tagline -->
+  <text x="30" y="148" font-family="'Courier New', monospace" font-size="12" fill="#ffafff" opacity="0.5">🧠  spec-driven development</text>
+
+  <!-- version badge -->
+  <rect x="720" y="132" width="94" height="20" rx="4" fill="#ffafff" opacity="0.12"/>
+  <text x="767" y="146" font-family="'Courier New', monospace" font-size="11" fill="#ffafff" text-anchor="middle">v 0.1.0</text>
+</svg>
