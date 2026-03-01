@@ -149,7 +149,14 @@ pub fn run() -> Result<()> {
     tui::print_success("Key stored encrypted in ~/.enthropic/global.keys");
     tui::print_success(&format!("Config saved  provider={}  model={}", provider, model));
     println!();
-    tui::print_dim("  Run  enthropic build  from any project folder to start.");
+
+    let create_now = tui::confirm("Create a new project now?")?;
+    if create_now {
+        println!();
+        crate::new_wizard::run()?;
+    } else {
+        tui::print_dim("  Run  enthropic build  from any project folder to start.");
+    }
 
     Ok(())
 }

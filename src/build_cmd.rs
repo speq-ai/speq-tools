@@ -42,7 +42,29 @@ pub fn run(file: Option<&PathBuf>) -> Result<()> {
         }
     };
 
-    let spec_path = resolve_spec(file)?;
+    let spec_path = match resolve_spec(file) {
+        Ok(p) => p,
+        Err(_) => {
+            tui::print_dim("  No .enth spec found in this directory.");
+            println!();
+            let create = tui::confirm("Create a new project here?")?;
+            if create {
+                println!();
+                crate::new_wizard::run()?;
+                // after wizard, try again
+                match resolve_spec(None) {
+                    Ok(p) => p,
+                    Err(_) => {
+                        tui::print_error("Spec still not found. Run  enthropic new  first.");
+                        return Ok(());
+                    }
+                }
+            } else {
+                tui::print_dim("  Navigate to a project folder with an .enth file and run  enthropic build  again.");
+                return Ok(());
+            }
+        }
+    };
     let spec = parser::parse(&spec_path)?;
 
     let project_name = project_name_from_spec(&spec, &spec_path);
