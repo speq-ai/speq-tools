@@ -4,7 +4,7 @@
 [![Lint](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/lint.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/lint.yml)
 [![CodeQL](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/codeql.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/codeql.yml)
 [![Security Scan](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/security-scan.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/security-scan.yml)
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/enthropic-spec/enthropic-tools/badge)](https://securityscorecards.dev/viewer/?uri=github.com/enthropic-spec/enthropic-tools)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/Enthropic-spec/enthropic-tools/badge)](https://securityscorecards.dev/viewer/?uri=github.com/Enthropic-spec/enthropic-tools)
 [![SLSA 3](https://slsa.dev/images/gh-badge-level3.svg)](https://slsa.dev)
 
 CLI for the [Enthropic](https://github.com/enthropic-spec/enthropic) specification.  
