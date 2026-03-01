@@ -2,7 +2,7 @@
 name = "enthropic"
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.80"
+rust-version = "1.85"
 license = "MIT"
 description = "CLI for the Enthropic spec-driven development format"
 repository = "https://github.com/enthropic-spec/enthropic-tools"
