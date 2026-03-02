@@ -1,5 +1,5 @@
 # Build stage — uses oven/bun for fast, single-file bundling
-FROM --platform=linux/amd64 oven/bun:1-alpine@sha256:62a6c21ca5d6197589298a6846600db7461b6079d90168f764b2fcf591c01360 AS builder
+FROM oven/bun:1-alpine@sha256:32f1fcccb1523960b254c4f80973bee1a910d60be000a45c20c9129a1efcffee AS builder
 WORKDIR /build
 COPY package*.json tsconfig.json ./
 RUN bun install --frozen-lockfile
