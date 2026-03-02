@@ -1,7 +1,6 @@
 ![enthropic](assets/banner.svg)
 
 [![npm version](https://img.shields.io/npm/v/enthropic.svg)](https://www.npmjs.com/package/enthropic)
-[![npm downloads](https://img.shields.io/npm/dm/enthropic.svg)](https://www.npmjs.com/package/enthropic)
 [![CI](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/ci.yml)
 [![Lint](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/lint.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/lint.yml)
 [![CodeQL](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/codeql.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/codeql.yml)
@@ -173,7 +172,7 @@ The encryption key is in `~/.enthropic/[name].key` (chmod 600). Neither is ever 
 - ✅ `enthropic context` — AI context block generation (pager view)
 - ✅ `enthropic new` — AI-guided project wizard with project folder structure
 - ✅ `enthropic update` — interactive AI refinement session for existing specs
-- ✅ `enthropic reverse` — reverse-engineer a codebase into a starter spec
+- ✅ `enthropic reverse` — entry point to reverse-engineer a codebase into a starter spec
 - ✅ `enthropic state` — build progress tracking with project picker
 - ✅ `enthropic vault` — encrypted secrets (ChaCha20-Poly1305, never in repo)
 - ✅ `enthropic setup` — BYOK API key configuration (OpenAI, Anthropic, OpenRouter)
@@ -181,22 +180,21 @@ The encryption key is in `~/.enthropic/[name].key` (chmod 600). Neither is ever 
 - ✅ `enthropic open` / `enthropic delete` — project management
 - ✅ Post-check AI refine flow — errors passed as context to the AI session automatically
 - ✅ SLSA Level 3 provenance on release
-- ✅ Hardened CI (SHA-pinned actions, CodeQL, Trivy, OpenSSF Scorecard)
+- ✅ Hardened CI (SHA-pinned actions, CodeQL, Trivy, OpenSSF Scorecard, dependency review)
 
-#### v0.2.0 — Distribution
-- ⬜ Docker image signed with cosign → `ghcr.io/enthropic-spec/enthropic-tools`
-- ⬜ npm publish — `npm install -g enthropic` (verify name availability, smoke tests first)
-- ⬜ Pre-built binaries on Releases — macOS arm64, Linux amd64, Windows amd64
-- ⬜ Homebrew tap — `brew install enthropic-spec/tap/enthropic`
-- ⬜ SBOM generated and attached to every release
-- ⬜ `enthropic verify` — verify binary or image signature locally
+#### v0.2.0 — Distribution ✅
+- ✅ `npm install -g enthropic` — live on the public npm registry
+- ✅ Automated release pipeline — `npm version patch && git push --tags` triggers build → publish → GitHub Release with auto-generated notes
+- ✅ npm provenance attestation on every publish (links package to GitHub Actions run)
+- ✅ Dependency review gate — PRs with HIGH/CRITICAL CVEs are blocked automatically
 
 #### v0.3.0 — Integrations
-- ⬜ **Webhook / bot integration** — HTTP endpoint that receives events (GitHub PR merged, deploy succeeded) and auto-updates project state; Slack/Discord bot that posts check results and state diffs
 - ⬜ GitHub Action — `enthropic check` as a CI step; fails PR if spec has errors
 - ⬜ `enthropic watch` — file watcher that runs check on `.enth` save and reports live
+- ⬜ **Webhook / bot integration** — HTTP endpoint that receives events (GitHub PR merged, deploy succeeded) and auto-updates project state; Slack/Discord bot posts check results and state diffs
 - ⬜ VS Code extension — syntax highlighting, validate on save, inline error markers
 - ⬜ LSP server for any editor
+- ⬜ Docker image on ghcr.io / Homebrew tap / standalone binaries *(if community demand)*
 
 #### v0.4.0 — Security
 - ⬜ `SECURITY` block support — parse and validate `AUTH`, `CORS`, `RATE_LIMIT`, `INPUT_VALIDATION`
@@ -217,3 +215,4 @@ The `.enth` format is defined in [enthropic/SPEC.md](https://github.com/Enthropi
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
 [![Node.js 20+](https://img.shields.io/badge/node-20+-brightgreen.svg)](https://nodejs.org)
+[![npm downloads](https://img.shields.io/npm/dm/enthropic.svg)](https://www.npmjs.com/package/enthropic)

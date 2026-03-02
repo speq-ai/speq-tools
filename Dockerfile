@@ -1,10 +1,11 @@
-# Build stage
-FROM node:24-alpine@sha256:7fddd9ddeae8196abf4a3ef2de34e11f7b1a722119f91f28ddf1e99dcafdf114 AS builder
+# Build stage — uses oven/bun for fast, single-file bundling
+FROM oven/bun:1-alpine@sha256:17a6954679ad1466b34b00beeea1a8ff80b98870d048bf0794a47a2341f8645f AS builder
 WORKDIR /build
 COPY package*.json tsconfig.json ./
-RUN npm ci --ignore-scripts
+RUN bun install --frozen-lockfile
 COPY src ./src
-RUN npm run build
+RUN bun build src/index.ts --outfile dist/index.js --target node --packages=external --format esm \
+ && node -e "const fs=require('fs');const f='dist/index.js';const c=fs.readFileSync(f,'utf8');if(!c.startsWith('#!/'))fs.writeFileSync(f,'#!/usr/bin/env node\n'+c);fs.chmodSync(f,0o755);"
 
 # Runtime stage — npm removed (not needed at runtime, eliminates npm-bundled CVEs)
 FROM node:24-alpine@sha256:7fddd9ddeae8196abf4a3ef2de34e11f7b1a722119f91f28ddf1e99dcafdf114
