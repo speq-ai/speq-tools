@@ -3,6 +3,10 @@ name: OpenSSF Scorecard
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'package*.json'
+      - '.github/**'
   schedule:
     - cron: '0 6 * * 1'
 
