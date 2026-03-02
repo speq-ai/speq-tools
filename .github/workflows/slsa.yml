@@ -8,32 +8,29 @@ permissions: read-all
 
 jobs:
   build:
-    name: Build release binary
+    name: Build release bundle
     runs-on: ubuntu-latest
     outputs:
       binary-digest: ${{ steps.hash.outputs.hash }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
-      - uses: dtolnay/rust-toolchain@efa25f7f19611383d5b0ccf2d1c8914531636bf9 # stable
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          toolchain: stable
-      - uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5 # v2
-
-      - name: Build release
-        run: cargo build --release
-
+          node-version: '20'
+          cache: 'npm'
+      - name: Build bundle
+        run: npm ci && npm run build && npm run bundle
       - name: Compute hash
         id: hash
         run: |
-          sha256sum target/release/enthropic > checksums.txt
+          sha256sum bundle/index.js > checksums.txt
           echo "hash=$(base64 -w0 checksums.txt)" >> "$GITHUB_OUTPUT"
-
-      - name: Upload binary artifact
+      - name: Upload bundle artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         with:
-          name: enthropic-linux-amd64
+          name: enthropic-bundle
           path: |
-            target/release/enthropic
+            bundle/index.js
             checksums.txt
           if-no-files-found: error
 

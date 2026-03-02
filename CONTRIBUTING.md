@@ -16,7 +16,7 @@ The CLI is a direct implementation of that spec. Changes to behavior must be gro
 ## What We Do Not Accept
 
 - New features that are not in the spec (open a spec issue first)
-- Dependency additions without strong justification (this is a single-binary tool)
+- Dependency additions without strong justification
 - Style-only changes
 - Breaking changes to the `.enth` format without a spec update
 
@@ -25,9 +25,10 @@ The CLI is a direct implementation of that spec. Changes to behavior must be gro
 ```bash
 git clone https://github.com/enthropic-spec/enthropic-tools
 cd enthropic-tools
-cargo build
-cargo test
-cargo clippy --all-targets -- -D warnings
+npm install
+npm run build
+npm run typecheck
+npm run lint
 ```
 
 ## Submitting a PR
@@ -35,13 +36,13 @@ cargo clippy --all-targets -- -D warnings
 1. Fork the repository
 2. Create a branch: `fix/parser-edge-case` or `feat/windows-support`
 3. Write or update tests if applicable
-4. Run `cargo fmt` and `cargo clippy` before pushing
+4. Run `npm run lint` and `npm run typecheck` before pushing
 5. Open a PR with a clear description of what changes and why
 
 ## Code Style
 
-- `cargo fmt` is the law
-- No `unwrap()` in library code — use `?` and `anyhow`
+- `npm run lint` (ESLint + TypeScript) is the law
+- No uncaught exceptions in library code — handle errors and surface them to the user
 - Errors must be actionable (tell the user what to do, not just what went wrong)
 - Secrets never in logs, never in error messages
 

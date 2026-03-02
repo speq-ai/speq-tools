@@ -8,29 +8,29 @@
 "dependencies":
   - changed-files:
     - any-glob-to-any-file:
-      - "Cargo.toml"
-      - "Cargo.lock"
+      - "package.json"
+      - "package-lock.json"
       - ".github/dependabot.yml"
 
 "parser":
   - changed-files:
-    - any-glob-to-any-file: "src/parser.rs"
+    - any-glob-to-any-file: "src/parser.ts"
 
 "spec":
   - changed-files:
     - any-glob-to-any-file:
-      - "src/validator.rs"
-      - "src/context.rs"
+      - "src/validator.ts"
+      - "src/context.ts"
 
 "mcp":
   - changed-files:
-    - any-glob-to-any-file: "src/mcp.rs"
+    - any-glob-to-any-file: "src/mcp.ts"
 
 "security":
   - changed-files:
     - any-glob-to-any-file:
-      - "src/vault.rs"
-      - "src/global_config.rs"
+      - "src/vault.ts"
+      - "src/global_config.ts"
       - "SECURITY.md"
 
 "docker":

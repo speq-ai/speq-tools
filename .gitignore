@@ -1,4 +1,8 @@
 /target
+node_modules/
+dist/
+*.tsbuildinfo
+bundle/
 .env
 vault_*.enth
 state_*.enth
