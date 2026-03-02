@@ -14,23 +14,24 @@ jobs:
       binary-digest: ${{ steps.hash.outputs.hash }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: oven-sh/setup-bun@4bc047ad259df6fc24a6c9b0f9a0cb08cf17fbe5 # v2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
           cache: 'npm'
-      - name: Build bundle
-        run: npm ci && npm run build && npm run bundle
+      - name: Build
+        run: npm ci && npm run build
       - name: Compute hash
         id: hash
         run: |
-          sha256sum bundle/index.js > checksums.txt
+          sha256sum dist/index.js > checksums.txt
           echo "hash=$(base64 -w0 checksums.txt)" >> "$GITHUB_OUTPUT"
-      - name: Upload bundle artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
         with:
-          name: enthropic-bundle
+          name: enthropic-dist
           path: |
-            bundle/index.js
+            dist/index.js
             checksums.txt
           if-no-files-found: error
 

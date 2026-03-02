@@ -1,5 +1,7 @@
 ![enthropic](assets/banner.svg)
 
+[![npm version](https://img.shields.io/npm/v/enthropic.svg)](https://www.npmjs.com/package/enthropic)
+[![npm downloads](https://img.shields.io/npm/dm/enthropic.svg)](https://www.npmjs.com/package/enthropic)
 [![CI](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/ci.yml)
 [![Lint](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/lint.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/lint.yml)
 [![CodeQL](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/codeql.yml/badge.svg)](https://github.com/enthropic-spec/enthropic-tools/actions/workflows/codeql.yml)

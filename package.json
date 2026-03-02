@@ -6,7 +6,7 @@
   "author": "Enthropic-spec",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Enthropic-spec/enthropic-tools.git"
+    "url": "git+https://github.com/Enthropic-spec/enthropic-tools.git"
   },
   "keywords": [
     "enthropic",
