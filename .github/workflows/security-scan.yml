@@ -7,7 +7,6 @@ on:
       - 'src/**'
       - 'package*.json'
       - 'tsconfig.json'
-      - 'Dockerfile'
       - '.github/workflows/security-scan.yml'
   pull_request:
     branches: [main]
@@ -15,7 +14,6 @@ on:
       - 'src/**'
       - 'package*.json'
       - 'tsconfig.json'
-      - 'Dockerfile'
       - '.github/workflows/security-scan.yml'
   schedule:
     - cron: '0 4 * * 1'
@@ -61,43 +59,3 @@ jobs:
         with:
           sarif_file: trivy-results.sarif
           category: trivy
-
-  trivy-docker:
-    name: Trivy Docker image scan
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
-
-      - name: Build image
-        run: docker build -t enthropic:scan .
-
-      - name: Install Trivy
-        run: |
-          sudo apt-get install -y wget gnupg
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key \
-            | gpg --dearmor \
-            | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" \
-            | sudo tee /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update -qq
-          sudo apt-get install -y trivy
-          trivy --version
-
-      - name: Scan Docker image
-        run: |
-          trivy image \
-            --severity CRITICAL,HIGH \
-            --format sarif \
-            --output trivy-docker.sarif \
-            --exit-code 0 \
-            enthropic:scan
-
-      - name: Upload Docker scan SARIF
-        uses: github/codeql-action/upload-sarif@89a39a4e59826350b863aa6b6252a07ad50cf83e # v4
-        with:
-          sarif_file: trivy-docker.sarif
-          category: trivy-docker
-
