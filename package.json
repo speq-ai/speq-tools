@@ -1,6 +1,6 @@
 {
   "name": "enthropic",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CLI companion for the Enthropic architectural specification format",
   "license": "MIT",
   "author": "Enthropic-spec",
