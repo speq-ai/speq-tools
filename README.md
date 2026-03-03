@@ -1,10 +1,12 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="enthropic" width="840"/>
+  <img src="assets/banner.svg" alt="enthropic"/>
 </p>
 
 <p align="center">
   CLI companion for the <a href="https://github.com/enthropic-spec/enthropic">Enthropic</a> spec format.
-  &nbsp;·&nbsp;
+</p>
+
+<p align="center">
   <a href="https://www.npmjs.com/package/enthropic"><img src="https://img.shields.io/npm/dm/enthropic.svg" alt="npm downloads"/></a>
 </p>
 
@@ -27,7 +29,7 @@ The CLI validates your spec, tracks build progress, and produces the context blo
 <summary>Example <code>.enth</code></summary>
 
 ```
-VERSION 1
+VERSION 1.0.0
 
 PROJECT "my-api"
   LANG    python
@@ -52,9 +54,11 @@ CONTRACTS
 
 ## Install
 
-```bash
-npm install -g enthropic
-```
+<p align="center">
+  <a href="https://www.npmjs.com/package/enthropic">
+    <img src="https://img.shields.io/badge/npm_install_-g_enthropic-ffafff?style=for-the-badge&labelColor=0f0f1a" alt="npm install -g enthropic"/>
+  </a>
+</p>
 
 Requires Node.js 20+. No telemetry.
 
@@ -65,8 +69,6 @@ Requires Node.js 20+. No telemetry.
 </p>
 
 ## Commands
-
-<p><img src="https://img.shields.io/badge/enthropic-interactive_menu-ffafff?style=flat-square&labelColor=0f0f1a" alt="enthropic"/></p>
 
 | Command | |
 |---|---|
