@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/**'
       - 'package*.json'
+      - 'bun.lock'
       - 'tsconfig.json'
       - 'eslint.config.js'
       - '.github/workflows/lint.yml'
@@ -14,6 +15,7 @@ on:
     paths:
       - 'src/**'
       - 'package*.json'
+      - 'bun.lock'
       - 'tsconfig.json'
       - 'eslint.config.js'
       - '.github/workflows/lint.yml'
