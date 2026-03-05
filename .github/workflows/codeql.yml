@@ -40,9 +40,9 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
-          cache: 'npm'
+
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
       - name: Build
         run: npm run build
       - uses: github/codeql-action/analyze@89a39a4e59826350b863aa6b6252a07ad50cf83e # v4

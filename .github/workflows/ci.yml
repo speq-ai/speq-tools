@@ -35,9 +35,9 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
-          cache: 'npm'
+
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
       - name: Typecheck
         run: npm run typecheck
       - name: Lint
@@ -54,14 +54,15 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v4
+      - uses: oven-sh/setup-bun@3d267786b128fe76c2f16a390aa2448b815359f3 # v2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
-          cache: 'npm'
+
       - name: Install dependencies
-        run: npm ci --ignore-scripts
+        run: bun install --frozen-lockfile
       - name: Audit dependencies
-        run: npm audit --audit-level=high
+        run: bun audit
 
   min-node:
     name: Minimum Node.js (v20)
@@ -74,8 +75,8 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20'
-          cache: 'npm'
+
       - name: Install dependencies
-        run: npm ci
+        run: bun install --frozen-lockfile
       - name: Build on minimum Node
         run: npm run build
