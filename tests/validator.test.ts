@@ -6,7 +6,7 @@ import { parse } from '../src/parser.js';
 import { validate } from '../src/validator.js';
 
 function errors(content: string): ReturnType<typeof validate> {
-  const path = join(tmpdir(), `enth_v_${Date.now()}_${Math.random().toString(36).slice(2)}.enth`);
+  const path = join(tmpdir(), `speq_v_${Date.now()}_${Math.random().toString(36).slice(2)}.speq`);
   writeFileSync(path, content);
   try {
     return validate(parse(path));

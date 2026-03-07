@@ -35,7 +35,7 @@ const PAGES: (() => void)[] = [
   // Page 1 — intro
   () => {
     box([
-      tui.pink('  ENTHROPIC  —  quick start guide'),
+      tui.pink('  SPEQ  —  quick start guide'),
       chalk.dim('  for people who just want to ship'),
     ]);
     console.log();
@@ -44,8 +44,8 @@ const PAGES: (() => void)[] = [
     line(chalk.white('  Every time you start a new AI session,'));
     line(chalk.white('  the AI forgets your entire architecture.'));
     line();
-    line('With Enthropic you write your architecture once in a');
-    line(chalk.white('.enth') + ' file. Every AI session reads it first.');
+    line('With SpeQ you write your architecture once in a');
+    line(chalk.white('.speq') + ' file. Every AI session reads it first.');
     line();
     line('Same spec, any agent, any session — identical architecture.');
     line();
@@ -57,7 +57,7 @@ const PAGES: (() => void)[] = [
   () => {
     section('The workflow  (5 steps, once per project)');
     console.log();
-    step(1, 'setup',   'tell Enthropic which AI provider you use');
+    step(1, 'setup',   'tell SpeQ which AI provider you use');
     console.log();
     step(2, 'new',     'talk to an AI consultant — it writes your spec');
     console.log();
@@ -82,7 +82,7 @@ const PAGES: (() => void)[] = [
     line(tui.pink('  OpenRouter') + chalk.dim('  →  any model, one key'));
     console.log();
     line('Get a key, then run ' + chalk.white('setup') + ' from the main menu.');
-    line('Enthropic stores it encrypted on your machine.');
+    line('SpeQ stores it encrypted on your machine.');
     line('It never leaves except to call the API directly.');
     console.log();
     line(chalk.dim('  OpenRouter is the easiest if you want to try'));
@@ -102,7 +102,7 @@ const PAGES: (() => void)[] = [
     line(chalk.dim('  their own API key and talk to different AI models"'));
     console.log();
     line('The consultant asks follow-up questions, then generates');
-    line('a ' + chalk.white('.enth') + ' file — your architectural contract.');
+    line('a ' + chalk.white('.speq') + ' file — your architectural contract.');
     console.log();
     line('It covers:');
     line(chalk.dim('  • entities  (the things in your system)'));
@@ -172,11 +172,11 @@ const PAGES: (() => void)[] = [
       chalk.dim('  context  →  paste into any AI, every session'),
     ]);
     console.log();
-    line('The spec lives in your project folder as a ' + chalk.white('.enth') + ' file.');
+    line('The spec lives in your project folder as a ' + chalk.white('.speq') + ' file.');
     line('Commit it. It is your source of truth.');
     console.log();
     line(chalk.dim('  Full spec reference:'));
-    line(chalk.dim('  github.com/Enthropic-spec/enthropic'));
+    line(chalk.dim('  github.com/speq-ai/speq'));
     console.log();
   },
 ];

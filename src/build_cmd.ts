@@ -18,7 +18,7 @@ interface Message {
 }
 
 const SPEC_FORMAT = `
-## .enth Format Reference (v0.2)
+## .speq Format Reference (v0.2)
 
 ### VERSION (required, must be first non-blank statement)
 VERSION 0.2.0
@@ -118,16 +118,16 @@ CHANGELOG
 - [LAYER_NAME] on FLOW steps must reference a declared layer
 `;
 
-const SYSTEM_CONSULTANT = `You are an Enthropic spec consultant. Your only output is a complete, valid .enth architectural specification — never code, never pseudocode, never prose without a spec block.
+const SYSTEM_CONSULTANT = `You are an SpeQ spec consultant. Your only output is a complete, valid .speq architectural specification — never code, never pseudocode, never prose without a spec block.
 
-A .enth file is an architectural contract. It is written BEFORE code. Once locked, it is the source of truth. Every change to it implies architecture rethinking, data migrations, and integration updates.
+A .speq file is an architectural contract. It is written BEFORE code. Once locked, it is the source of truth. Every change to it implies architecture rethinking, data migrations, and integration updates.
 
 ## Your process
 1. Ask focused questions to deeply understand the project: domain, users, critical flows, external services, security requirements, failure modes.
 2. Never generate the spec until you have enough to make it complete. If unclear: ask, don't guess.
 3. Probe explicitly for: auth model, payment/billing, file storage, admin roles, rate limiting, background jobs, deployment target.
 4. Flag missing pieces: "You have a checkout flow but no payment entity — is that intentional?"
-5. When ready, output the full spec inside a single \`\`\`enth code block. Then briefly explain your main structural choices (3–5 lines max).
+5. When ready, output the full spec inside a single \`\`\`speq code block. Then briefly explain your main structural choices (3–5 lines max).
 6. Warn once: this is a binding contract.
 
 ## Critical rules for generated specs (violations cause validation errors)
@@ -223,7 +223,7 @@ async function callOpenAICompatible(baseUrl: string, model: string, apiKey: stri
 }
 
 function extractEnthBlock(text: string): string | null {
-  const startMarker = '```enth';
+  const startMarker = '```speq';
   const endMarker = '```';
   const start = text.indexOf(startMarker);
   if (start === -1) return null;
@@ -234,7 +234,7 @@ function extractEnthBlock(text: string): string | null {
 }
 
 async function saveSpec(content: string, workdir: string): Promise<string | null> {
-  const tmp = join(tmpdir(), '_enthropic_tmp.enth');
+  const tmp = join(tmpdir(), '_speq_tmp.speq');
   writeFileSync(tmp, content);
   try {
     const spec = parse(tmp);
@@ -242,18 +242,18 @@ async function saveSpec(content: string, workdir: string): Promise<string | null
     const nameVal = spec.project.get('NAME');
     const name = nameVal?.kind === 'str'
       ? nameVal.value.replace(/^"|"$/g, '').toLowerCase().replace(/ /g, '_')
-      : 'enthropic';
+      : 'speq';
 
     const projectDir = join(workdir, name);
     mkdirSync(projectDir, { recursive: true });
 
-    const outPath = join(projectDir, `${name}.enth`);
+    const outPath = join(projectDir, `${name}.speq`);
     writeFileSync(outPath, content);
-    tui.printSuccess(`Spec saved to ${projectDir}/${name}.enth`);
+    tui.printSuccess(`Spec saved to ${projectDir}/${name}.speq`);
 
     const stateContent = generateState(spec, name);
-    writeFileSync(join(projectDir, `state_${name}.enth`), stateContent);
-    tui.printSuccess(`State file: state_${name}.enth`);
+    writeFileSync(join(projectDir, `state_${name}.speq`), stateContent);
+    tui.printSuccess(`State file: state_${name}.speq`);
 
 
     console.log();
@@ -278,17 +278,17 @@ export async function run(file?: string, forceNew = false, workdir = process.cwd
   const cfg = globalConfig.loadConfig();
   const provider = cfg.provider;
   if (!provider) {
-    tui.printError('No provider configured. Run  enthropic setup  first.');
+    tui.printError('No provider configured. Run  speq setup  first.');
     return;
   }
   const model = cfg.model;
   if (!model) {
-    tui.printError('No model configured. Run  enthropic setup  first.');
+    tui.printError('No model configured. Run  speq setup  first.');
     return;
   }
   const apiKey = globalConfig.getApiKey(provider);
   if (!apiKey) {
-    tui.printError(`No API key found for ${provider}. Run  enthropic setup  first.`);
+    tui.printError(`No API key found for ${provider}. Run  speq setup  first.`);
     return;
   }
 
@@ -306,13 +306,13 @@ export async function run(file?: string, forceNew = false, workdir = process.cwd
     if (initialErrors) {
       // called from check → "refine with AI" — inject errors as AI context
       const specText = readFileSync(existingSpecPath, 'utf-8');
-      const opener = `Ho caricato la tua spec. Ci sono i seguenti problemi da correggere:\n\n${initialErrors}\n\nEcco la spec attuale:\n\`\`\`enth\n${specText}\n\`\`\`\n\nDimmi se vuoi che li risolva io direttamente, o se preferisci ragionare su come sistemare ogni punto.`;
+      const opener = `Ho caricato la tua spec. Ci sono i seguenti problemi da correggere:\n\n${initialErrors}\n\nEcco la spec attuale:\n\`\`\`speq\n${specText}\n\`\`\`\n\nDimmi se vuoi che li risolva io direttamente, o se preferisci ragionare su come sistemare ogni punto.`;
       console.log(`${tui.pink('🧠  ›')} ${opener}\n`);
       history.push({ role: 'assistant', content: opener });
     } else if (alwaysRefine) {
       // called from "update" menu — always refine, no question
       const specText = readFileSync(existingSpecPath, 'utf-8');
-      const opener = `Loading your spec for refinement.\n\n\`\`\`enth\n${specText}\n\`\`\`\n\nWhat do you want to change or extend?`;
+      const opener = `Loading your spec for refinement.\n\n\`\`\`speq\n${specText}\n\`\`\`\n\nWhat do you want to change or extend?`;
       console.log(`${tui.pink('🧠  ›')} ${opener}\n`);
       history.push({ role: 'assistant', content: opener });
     } else {
@@ -321,7 +321,7 @@ export async function run(file?: string, forceNew = false, workdir = process.cwd
       const refine = await tui.confirm('Refine existing spec with AI?');
       if (refine) {
         const specText = readFileSync(existingSpecPath, 'utf-8');
-        const opener = `I'm loading your existing spec for review.\n\n\`\`\`enth\n${specText}\n\`\`\`\n\nTell me what you want to change or extend, or ask me to review it for completeness.`;
+        const opener = `I'm loading your existing spec for review.\n\n\`\`\`speq\n${specText}\n\`\`\`\n\nTell me what you want to change or extend, or ask me to review it for completeness.`;
         console.log(`${tui.pink('🧠  ›')} ${opener}\n`);
         history.push({ role: 'assistant', content: opener });
       } else {
@@ -332,7 +332,7 @@ export async function run(file?: string, forceNew = false, workdir = process.cwd
   } else {
     console.log(`  ${tui.dimmed('')} provider: ${tui.dimmed(provider)}  model: ${tui.dimmed(model)}`);
     console.log(sep);
-    console.log('  Spec consultant — design your .enth through conversation.');
+    console.log('  Spec consultant — design your .speq through conversation.');
     console.log();
     console.log(`  ${tui.dimmed('type exit to end session')}`);
     console.log(`${sep}\n`);
@@ -430,7 +430,7 @@ export async function run(file?: string, forceNew = false, workdir = process.cwd
       spinner.stop();
       process.stdin.resume();
       tui.printError(`API error: ${String(e)}  (session continues)`);
-      tui.printDim('  Try again or switch model with  enthropic setup.');
+      tui.printDim('  Try again or switch model with  speq setup.');
       console.log();
     }
   }

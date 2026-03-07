@@ -11,7 +11,7 @@ export interface GlobalConfig {
 }
 
 function configDir(): string {
-  return join(homedir(), '.enthropic');
+  return join(homedir(), '.speq');
 }
 
 function configPath(): string {

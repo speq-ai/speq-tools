@@ -7,7 +7,7 @@ import chalk from 'chalk';
 import { select, Separator } from '@inquirer/prompts';
 
 import { parse } from './parser.js';
-import type { EnthSpec } from './parser.js';
+import type { SpeqSpec } from './parser.js';
 import { cmdCheck, check } from './check.js';
 import { generate as generateContext } from './context.js';
 import { setStatus } from './state.js';
@@ -20,9 +20,9 @@ import { run as initRun } from './init_cmd.js';
 import { resolveSpec } from './utils.js';
 import { getWorkdir, loadConfig } from './global_config.js';
 
-function projectName(spec: EnthSpec, path: string): string {
+function projectName(spec: SpeqSpec, path: string): string {
   const val = spec.project.get('NAME');
-  const raw = val?.kind === 'str' ? val.value : path.replace(/\.enth$/, '').split('/').pop() ?? 'project';
+  const raw = val?.kind === 'str' ? val.value : path.replace(/\.speq$/, '').split('/').pop() ?? 'project';
   return raw.replace(/^"|"$/g, '').toLowerCase().replace(/ /g, '_');
 }
 
@@ -33,7 +33,7 @@ function cmdContext(file?: string, out?: string): boolean {
   const spec = parse(path);
   const name = projectName(spec, path);
   const dir = dirname(path);
-  const candidate = resolve(dir, `state_${name}.enth`);
+  const candidate = resolve(dir, `state_${name}.speq`);
   const statePath = existsSync(candidate) ? candidate : undefined;
   const result = generateContext(spec, statePath);
 
@@ -56,17 +56,17 @@ function cmdStateShow(file?: string): boolean {
       const path = resolveSpec(file);
       const spec = parse(path);
       const name = projectName(spec, path);
-      statePath = resolve(dirname(path), `state_${name}.enth`);
+      statePath = resolve(dirname(path), `state_${name}.speq`);
     }
   } else {
     const path = resolveSpec(undefined);
     const spec = parse(path);
     const name = projectName(spec, path);
-    statePath = resolve(dirname(path), `state_${name}.enth`);
+    statePath = resolve(dirname(path), `state_${name}.speq`);
   }
 
   if (!existsSync(statePath)) {
-    console.error(`${chalk.red('✗')} No state file found. Run 'enthropic check' first.`);
+    console.error(`${chalk.red('✗')} No state file found. Run 'speq check' first.`);
     return false;
   }
   process.stdout.write(readFileSync(statePath, 'utf-8'));
@@ -77,10 +77,10 @@ function cmdStateSet(key: string, status: string, file?: string): boolean {
   const specPath = resolveSpec(file);
   const spec = parse(specPath);
   const name = projectName(spec, specPath);
-  const statePath = resolve(dirname(specPath), `state_${name}.enth`);
+  const statePath = resolve(dirname(specPath), `state_${name}.speq`);
 
   if (!existsSync(statePath)) {
-    console.error(`${chalk.red('✗')} State file not found: ${statePath}. Run 'enthropic check' first.`);
+    console.error(`${chalk.red('✗')} State file not found: ${statePath}. Run 'speq check' first.`);
     return false;
   }
 
@@ -101,23 +101,23 @@ async function pickEnthFile(workdir: string, label = 'Select project', allowBack
 
   // Flat files in workdir
   for (const f of readdirSync(workdir).sort()) {
-    if (f.endsWith('.enth') && !f.startsWith('state_')) {
+    if (f.endsWith('.speq') && !f.startsWith('state_')) {
       choices.push({ name: tui.pink(f), value: join(workdir, f) });
     }
   }
 
-  // Project subfolders: workdir/<slug>/<slug>.enth
+  // Project subfolders: workdir/<slug>/<slug>.speq
   for (const entry of readdirSync(workdir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
     if (entry.isDirectory()) {
-      const specPath = join(workdir, entry.name, `${entry.name}.enth`);
+      const specPath = join(workdir, entry.name, `${entry.name}.speq`);
       if (existsSync(specPath)) {
-        choices.push({ name: tui.pink(entry.name) + tui.dimmed(`  ${entry.name}/${entry.name}.enth`), value: specPath });
+        choices.push({ name: tui.pink(entry.name) + tui.dimmed(`  ${entry.name}/${entry.name}.speq`), value: specPath });
       }
     }
   }
 
   if (choices.length === 0) {
-    tui.printError('No .enth projects found in ' + workdir);
+    tui.printError('No .speq projects found in ' + workdir);
     return null;
   }
 
@@ -143,13 +143,13 @@ async function runInteractiveMenu(workdir: string): Promise<void> {
       pageSize: 30,
       choices: [
         new Separator(),
-        { name: tui.pink('guide'.padEnd(11))    + tui.dimmed('Quick start guide — how to use Enthropic from zero'),        value: 'guide',   short: 'guide' },
+        { name: tui.pink('guide'.padEnd(11))    + tui.dimmed('Quick start guide — how to use SpeQ from zero'),        value: 'guide',   short: 'guide' },
         { name: tui.pink('setup'.padEnd(11))    + tui.dimmed('Configure AI provider and API key'),                          value: 'setup',   short: 'setup' },
         { name: tui.pink('open'.padEnd(11))     + tui.dimmed('Open a project spec in your editor'),                         value: 'open',    short: 'open' },
         new Separator(),
-        { name: tui.pink('new'.padEnd(11))      + tui.dimmed('Create a new .enth project'),                                 value: 'new',     short: 'new' },
+        { name: tui.pink('new'.padEnd(11))      + tui.dimmed('Create a new .speq project'),                                 value: 'new',     short: 'new' },
         { name: tui.pink('update'.padEnd(11))   + tui.dimmed('Refine an existing spec with AI'),                            value: 'update',  short: 'update' },
-        { name: tui.pink('reverse'.padEnd(11))  + tui.dimmed('Reverse-engineer a codebase into a starter .enth file'),      value: 'reverse', short: 'reverse' },
+        { name: tui.pink('reverse'.padEnd(11))  + tui.dimmed('Reverse-engineer a codebase into a starter .speq file'),      value: 'reverse', short: 'reverse' },
         new Separator(),
         { name: tui.pink('check'.padEnd(11))    + tui.dimmed('Validate & lint — errors and warnings in one view'),          value: 'check',   short: 'check' },
         { name: tui.pink('context'.padEnd(11))  + tui.dimmed('Generate AI context block from a spec'),                      value: 'context', short: 'context' },
@@ -175,15 +175,10 @@ async function runInteractiveMenu(workdir: string): Promise<void> {
        
       const specFile = await pickEnthFile(workdir, 'Open which project?', true);
       if (specFile) {
-        const editor = process.env.EDITOR ?? 'open';
         try {
-          execSync(`${editor} "${specFile}"`, { stdio: 'ignore' });
-          tui.printSuccess(`Opened  ${specFile}`);
-        } catch {
-          // fallback to macOS open
-          try { execSync(`open "${specFile}"`, { stdio: 'ignore' }); tui.printSuccess(`Opened  ${specFile}`); }
-          catch (e) { tui.printError(`Cannot open file: ${String(e)}`); }
-        }
+          execSync(`osascript -e 'tell application "Terminal" to do script "cat \\"${specFile}\\"; echo; echo \\"--- press any key to close ---\\"; read"'`, { stdio: 'ignore' });
+          tui.printSuccess(`Opened  ${specFile}  in new terminal`);
+        } catch (e) { tui.printError(`Cannot open file: ${String(e)}`); }
          
         await tui.pressEnter();
       }
@@ -231,9 +226,8 @@ async function runInteractiveMenu(workdir: string): Promise<void> {
              
             await buildRun(file, false, workdir, true, errorsText);
           } else if (action === 'edit') {
-            const editor = process.env.EDITOR ?? 'open';
-            try { execSync(`${editor} "${file}"`, { stdio: 'ignore' }); }
-            catch { try { execSync(`open "${file}"`, { stdio: 'ignore' }); } catch { /**/ } }
+            try { execSync(`osascript -e 'tell application "Terminal" to do script "cat \\"${file}\\"; echo; echo \\"--- press any key to close ---\\"; read"'`, { stdio: 'ignore' }); }
+            catch { /**/ }
           }
         } else {
            
@@ -247,13 +241,13 @@ async function runInteractiveMenu(workdir: string): Promise<void> {
         try {
           const spec = parse(file);
           const projectNm = spec.project.get('NAME');
-          const nm = projectNm?.kind === 'str' ? projectNm.value.replace(/"/g, '') : file.split('/').pop()?.replace('.enth', '') ?? 'project';
+          const nm = projectNm?.kind === 'str' ? projectNm.value.replace(/"/g, '') : file.split('/').pop()?.replace('.speq', '') ?? 'project';
           const dir = dirname(file);
-          const stateCand = resolve(dir, `state_${nm}.enth`);
+          const stateCand = resolve(dir, `state_${nm}.speq`);
           const statePath = existsSync(stateCand) ? stateCand : undefined;
           const { generate: genCtx } = await import('./context.js');
           const content = genCtx(spec, statePath);
-          const tmpFile = join(tmpdir(), `enth_ctx_${Date.now()}.md`);
+          const tmpFile = join(tmpdir(), `speq_ctx_${Date.now()}.md`);
           writeFileSync(tmpFile, content);
           const editor = process.env.EDITOR;
           if (editor) {
@@ -331,8 +325,8 @@ async function main(): Promise<void> {
   const program = new Command();
 
   program
-    .name('enthropic')
-    .description('Enthropic — toolkit for the .enth architectural specification format.')
+    .name('speq')
+    .description('SpeQ — toolkit for the .speq architectural specification format.')
     .helpOption('-h, --help', 'Show help')
     .addHelpCommand(false);
 
@@ -366,7 +360,7 @@ async function main(): Promise<void> {
       new Command('set')
         .argument('<key>', 'Key to update')
         .argument('<status>', 'New status')
-        .argument('[file]', '.enth spec file')
+        .argument('[file]', '.speq spec file')
         .description('Update a single entry status in the state file')
         .action((key: string, status: string, file?: string) => {
           cmdStateSet(key, status, file);
@@ -382,7 +376,7 @@ async function main(): Promise<void> {
 
   program
     .command('new')
-    .description('Create a new Enthropic project interactively')
+    .description('Create a new SpeQ project interactively')
     .action(async () => {
       await newWizardRun();
     });

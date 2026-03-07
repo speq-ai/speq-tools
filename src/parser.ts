@@ -103,7 +103,7 @@ export interface PerformanceEntry {
   };
 }
 
-export interface EnthSpec {
+export interface SpeqSpec {
   sourceFile: string;
   version: string;
   project: Map<string, ProjectValue>;
@@ -141,7 +141,7 @@ export function splitList(s: string): string[] {
 
 const BLOCK_INDENT = 2;
 
-function defaultSpec(sourceFile: string): EnthSpec {
+function defaultSpec(sourceFile: string): SpeqSpec {
   return {
     sourceFile: resolve(sourceFile),
     version: '',
@@ -166,7 +166,7 @@ function defaultSpec(sourceFile: string): EnthSpec {
   };
 }
 
-export function parse(path: string): EnthSpec {
+export function parse(path: string): SpeqSpec {
   const content = readFileSync(path, 'utf-8');
   const lines = content.split('\n');
   const spec = defaultSpec(path);
@@ -230,7 +230,7 @@ export function parse(path: string): EnthSpec {
   return spec;
 }
 
-function parseEntityMultiline(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseEntityMultiline(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   while (i < lines.length) {
     const clean = stripComment(lines[i]);
@@ -245,7 +245,7 @@ function parseEntityMultiline(lines: string[], start: number, spec: EnthSpec, st
   return i;
 }
 
-function parseProject(lines: string[], start: number, spec: EnthSpec): number {
+function parseProject(lines: string[], start: number, spec: SpeqSpec): number {
   let i = start;
   let inDeps = false;
   const depsMap: Record<string, string[]> = {};
@@ -293,7 +293,7 @@ function parseProject(lines: string[], start: number, spec: EnthSpec): number {
   return i;
 }
 
-function parseVocabulary(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseVocabulary(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   while (i < lines.length) {
     const clean = stripComment(lines[i]);
@@ -307,7 +307,7 @@ function parseVocabulary(lines: string[], start: number, spec: EnthSpec, stopInd
   return i;
 }
 
-function parseTransform(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseTransform(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   while (i < lines.length) {
     const clean = stripComment(lines[i]);
@@ -332,7 +332,7 @@ function parseTransform(lines: string[], start: number, spec: EnthSpec, stopInde
   return i;
 }
 
-function parseLayers(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseLayers(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   let current: string | null = null;
 
@@ -371,7 +371,7 @@ function parseLayers(lines: string[], start: number, spec: EnthSpec, stopIndent 
   return i;
 }
 
-function parseContext(lines: string[], start: number, spec: EnthSpec): number {
+function parseContext(lines: string[], start: number, spec: SpeqSpec): number {
   let i = start;
   while (i < lines.length) {
     const clean = stripComment(lines[i]);
@@ -406,7 +406,7 @@ function parseContext(lines: string[], start: number, spec: EnthSpec): number {
   return i;
 }
 
-function parseContracts(lines: string[], start: number, spec: EnthSpec): number {
+function parseContracts(lines: string[], start: number, spec: SpeqSpec): number {
   let i = start;
   let currentFlow: string | null = null;
 
@@ -491,7 +491,7 @@ function parseContracts(lines: string[], start: number, spec: EnthSpec): number 
   return i;
 }
 
-function parseSecrets(lines: string[], start: number, spec: EnthSpec): number {
+function parseSecrets(lines: string[], start: number, spec: SpeqSpec): number {
   let i = start;
   while (i < lines.length) {
     const clean = stripComment(lines[i]);
@@ -513,7 +513,7 @@ function parseSecrets(lines: string[], start: number, spec: EnthSpec): number {
   return i;
 }
 
-function parseOwnership(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseOwnership(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   while (i < lines.length) {
     const clean = stripComment(lines[i]);
@@ -541,7 +541,7 @@ function parseOwnership(lines: string[], start: number, spec: EnthSpec, stopInde
   return i;
 }
 
-function parseObservability(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseObservability(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   let current: string | null = null;
 
@@ -577,7 +577,7 @@ function parseObservability(lines: string[], start: number, spec: EnthSpec, stop
   return i;
 }
 
-function parseTesting(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseTesting(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   let current: string | null = null;
 
@@ -615,7 +615,7 @@ function parseTesting(lines: string[], start: number, spec: EnthSpec, stopIndent
   return i;
 }
 
-function parseQuotas(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseQuotas(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   while (i < lines.length) {
     const clean = stripComment(lines[i]);
@@ -633,7 +633,7 @@ function parseQuotas(lines: string[], start: number, spec: EnthSpec, stopIndent 
   return i;
 }
 
-function parsePerformance(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parsePerformance(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   let current: PerformanceEntry | null = null;
   let subBlock: 'baseline' | 'constraints' | null = null;
@@ -703,7 +703,7 @@ function parsePerformance(lines: string[], start: number, spec: EnthSpec, stopIn
 
 const VALID_CLASSIFY_CLASSES = new Set(['credential', 'pii', 'sensitive', 'internal']);
 
-function parseClassify(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseClassify(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   while (i < lines.length) {
     const clean = stripComment(lines[i]);
@@ -724,7 +724,7 @@ function parseClassify(lines: string[], start: number, spec: EnthSpec, stopInden
 
 const VALID_CHANGELOG_KEYWORDS = new Set(['BREAKING', 'ADDED', 'DEPRECATED', 'CHANGED']);
 
-function parseChangelog(lines: string[], start: number, spec: EnthSpec, stopIndent = 0): number {
+function parseChangelog(lines: string[], start: number, spec: SpeqSpec, stopIndent = 0): number {
   let i = start;
   let currentVersion: ChangelogVersion | null = null;
 

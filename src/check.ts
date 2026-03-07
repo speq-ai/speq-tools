@@ -2,7 +2,7 @@ import { existsSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import chalk from 'chalk';
 import { parse } from './parser.js';
-import type { EnthSpec } from './parser.js';
+import type { SpeqSpec } from './parser.js';
 import { validate } from './validator.js';
 import { lint } from './lint.js';
 import { generate as generateState } from './state.js';
@@ -14,7 +14,7 @@ export interface CheckResult {
   message: string;
 }
 
-export function check(spec: EnthSpec): CheckResult[] {
+export function check(spec: SpeqSpec): CheckResult[] {
   const results: CheckResult[] = [];
   for (const e of validate(spec)) {
     results.push({ rule: `V${e.rule}`, severity: 'ERROR', message: e.message });
@@ -25,9 +25,9 @@ export function check(spec: EnthSpec): CheckResult[] {
   return results;
 }
 
-function projectName(spec: EnthSpec, path: string): string {
+function projectName(spec: SpeqSpec, path: string): string {
   const val = spec.project.get('NAME');
-  const raw = val?.kind === 'str' ? val.value : path.replace(/\.enth$/, '').split('/').pop() ?? 'project';
+  const raw = val?.kind === 'str' ? val.value : path.replace(/\.speq$/, '').split('/').pop() ?? 'project';
   return raw.replace(/^"|"$/g, '').toLowerCase().replace(/ /g, '_');
 }
 
@@ -65,10 +65,10 @@ export function cmdCheck(file?: string): boolean {
     const name = projectName(spec, specPath);
     const dir = dirname(specPath);
 
-    const statePath = resolve(dir, `state_${name}.enth`);
+    const statePath = resolve(dir, `state_${name}.speq`);
     if (!existsSync(statePath)) {
       writeFileSync(statePath, generateState(spec, name));
-      console.log(chalk.dim(`  created state_${name}.enth`));
+      console.log(chalk.dim(`  created state_${name}.speq`));
     }
   }
 

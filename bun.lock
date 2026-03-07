@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "enthropic",
+      "name": "speq",
       "dependencies": {
         "@inquirer/prompts": "^8.3.0",
         "@noble/ciphers": "^2.1.1",

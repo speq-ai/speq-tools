@@ -1,11 +1,11 @@
 import { readFileSync, writeFileSync } from 'fs';
-import type { EnthSpec } from './parser.js';
+import type { SpeqSpec } from './parser.js';
 
 export const STATUS_VALUES = [
   'BUILT', 'PARTIAL', 'PENDING', 'OK', 'MISSING', 'UNVERIFIED', 'SET', 'UNSET',
 ] as const;
 
-export function generate(spec: EnthSpec, projectName: string): string {
+export function generate(spec: SpeqSpec, projectName: string): string {
   const lines: string[] = [`STATE ${projectName}`, ''];
 
   const checks: [string, string][] = [];

@@ -1,16 +1,18 @@
 {
-  "name": "enthropic",
-  "version": "0.1.3",
-  "description": "CLI companion for the Enthropic architectural specification format",
+  "name": "@speq-ai/speq",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.1.4",
+  "description": "CLI companion for the SpeQ architectural specification format",
   "license": "MIT",
-  "author": "Enthropic-spec",
+  "author": "speq",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Enthropic-spec/enthropic-tools.git"
+    "url": "git+https://github.com/speq-ai/speq-tools.git"
   },
   "keywords": [
-    "enthropic",
-    "enth",
+    "speq",
     "spec",
     "architecture",
     "ai",
@@ -18,7 +20,7 @@
   ],
   "type": "module",
   "bin": {
-    "enthropic": "dist/index.js"
+    "speq": "dist/index.js"
   },
   "files": [
     "dist/index.js",
@@ -29,9 +31,9 @@
     "prebuild": "node -e \"import('fs').then(fs=>{try{fs.rmSync('dist',{recursive:true})}catch{}})\"",
     "build": "bun build src/index.ts --outfile dist/index.js --target node --packages=external --format esm && node -e \"import('fs').then(fs=>{const f='dist/index.js';const c=fs.readFileSync(f,'utf8');if(!c.startsWith('#!/'))fs.writeFileSync(f,'#!/usr/bin/env node\\n'+c);fs.chmodSync(f,0o755);})\"",
     "prepare": "npm run build",
-    "binary:mac": "bun build src/index.ts --compile --outfile releases/enthropic-macos-arm64 --target bun-darwin-arm64",
-    "binary:linux": "bun build src/index.ts --compile --outfile releases/enthropic-linux-x64 --target bun-linux-x64",
-    "binary:win": "bun build src/index.ts --compile --outfile releases/enthropic-windows-x64.exe --target bun-windows-x64",
+    "binary:mac": "bun build src/index.ts --compile --outfile releases/speq-macos-arm64 --target bun-darwin-arm64",
+    "binary:linux": "bun build src/index.ts --compile --outfile releases/speq-linux-x64 --target bun-linux-x64",
+    "binary:win": "bun build src/index.ts --compile --outfile releases/speq-windows-x64.exe --target bun-windows-x64",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
     "test": "bun test",

@@ -1,9 +1,9 @@
 import { readFileSync, existsSync } from 'fs';
-import type { EnthSpec } from './parser.js';
+import type { SpeqSpec } from './parser.js';
 
-const PREAMBLE_TEMPLATE = `=== ENTHROPIC CONTEXT __version__ ===
+const PREAMBLE_TEMPLATE = `=== SPEQ CONTEXT __version__ ===
 
-This project uses the Enthropic specification format.
+This project uses the SpeQ specification format.
 Read the spec below before generating any code.
 All architectural decisions declared here are final.
 
@@ -32,7 +32,7 @@ RULES:
 
 `;
 
-export function generate(spec: EnthSpec, statePath?: string): string {
+export function generate(spec: SpeqSpec, statePath?: string): string {
   const version = spec.version || '0.1.0';
   const preamble = PREAMBLE_TEMPLATE.replace('__version__', version);
   const specContent = readFileSync(spec.sourceFile, 'utf-8');

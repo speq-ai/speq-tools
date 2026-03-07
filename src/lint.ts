@@ -1,4 +1,4 @@
-import type { EnthSpec } from './parser.js';
+import type { SpeqSpec } from './parser.js';
 
 export interface LintResult {
   rule: number;
@@ -6,7 +6,7 @@ export interface LintResult {
   message: string;
 }
 
-export function lint(spec: EnthSpec): LintResult[] {
+export function lint(spec: SpeqSpec): LintResult[] {
   const results: LintResult[] = [];
 
   // Collect all entities owned by any layer

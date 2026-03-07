@@ -1,12 +1,12 @@
 import chalk from 'chalk';
 import { confirm as inquirerConfirm, input as inquirerInput, password as inquirerPassword, select as inquirerSelect } from '@inquirer/prompts';
 
-const LOGO = `              __  __                     _     
-  ___  ____  / /_/ /_  _________  ____  (_)____
- / _ \\/ __ \\/ __/ __ \\/ ___/ __ \\/ __ \\/ / ___/
-/  __/ / / / /_/ / / / /  / /_/ / /_/ / / /__  
-\\___/_/ /_/\\__/_/ /_/_/   \\____/ .___/_/\\___/  
-                              /_/              `;
+const LOGO = `   _____            ____  
+  / ___/____  ___  / __ \\
+  \\__ \\/ __ \\/ _ \\/ / / /
+ ___/ / /_/ /  __/ /_/ / 
+/____/ .___/\\___/\\___\\_\\ 
+    /_/                  `;
 
 const SEPARATOR = '──────────────────────────────────────────────────────────────';
 

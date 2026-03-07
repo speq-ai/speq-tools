@@ -4,8 +4,8 @@ dist/
 *.tsbuildinfo
 bundle/
 .env
-vault_*.enth
-state_*.enth
+vault_*.speq
+state_*.speq
 
 .vscode/
 package-lock.json

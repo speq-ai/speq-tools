@@ -40,7 +40,7 @@ async function fetchOpenAIModels(apiKey: string): Promise<string[]> {
 async function fetchOpenRouterModels(): Promise<string[]> {
   try {
     const resp = await fetch('https://openrouter.ai/api/v1/models', {
-      headers: { 'HTTP-Referer': 'https://github.com/Enthropic-spec/enthropic-tools' },
+      headers: { 'HTTP-Referer': 'https://github.com/speq-ai/speq-tools' },
     });
     if (!resp.ok) return [];
     const json = await resp.json() as { data?: { id: string }[] };
@@ -68,7 +68,7 @@ async function selectModel(provider: string, apiKey: string): Promise<string> {
 
 export async function run(): Promise<void> {
 
-  console.log('  Welcome to Enthropic.\n');
+  console.log('  Welcome to SpeQ.\n');
   console.log('  To use the AI features you need an API key.');
   console.log('  Supported providers:  Anthropic · OpenAI · OpenRouter');
   console.log();
@@ -103,7 +103,7 @@ export async function run(): Promise<void> {
   globalConfig.saveConfig({ ...globalConfig.loadConfig(), provider, model });
 
   const currentWorkdir = getWorkdir();
-  const newDir = await tui.inputWithDefault('Working directory (where your .enth files live)', currentWorkdir);
+  const newDir = await tui.inputWithDefault('Working directory (where your .speq files live)', currentWorkdir);
   if (existsSync(newDir)) {
     setWorkdir(newDir);
   } else {
@@ -115,7 +115,7 @@ export async function run(): Promise<void> {
   }
 
   console.log();
-  tui.printSuccess('Key stored encrypted in ~/.enthropic/global.keys');
+  tui.printSuccess('Key stored encrypted in ~/.speq/global.keys');
   tui.printSuccess(`Config saved  provider=${provider}  model=${model}`);
   console.log();
 
@@ -125,6 +125,6 @@ export async function run(): Promise<void> {
     const { run: newWizardRun } = await import('./new_wizard.js');
     await newWizardRun();
   } else {
-    tui.printDim('  Run  enthropic  from any folder to get started.');
+    tui.printDim('  Run  speq  from any folder to get started.');
   }
 }

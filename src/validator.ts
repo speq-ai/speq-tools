@@ -1,4 +1,4 @@
-import type { EnthSpec } from './parser.js';
+import type { SpeqSpec } from './parser.js';
 
 export interface ValidationError {
   rule: number;
@@ -18,7 +18,7 @@ function isSnakeCase(s: string): boolean {
   return Boolean(s) && /^[a-z][a-z0-9_]*$/.test(s);
 }
 
-export function validate(spec: EnthSpec): ValidationError[] {
+export function validate(spec: SpeqSpec): ValidationError[] {
   const errors: ValidationError[] = [];
   const entities = new Set(spec.entities);
   const declaredLayers = new Set(spec.layers.keys());

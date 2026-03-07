@@ -5,7 +5,7 @@ import { tmpdir } from 'os';
 import { parse } from '../src/parser.js';
 
 function withSpec(content: string, fn: (path: string) => void): void {
-  const path = join(tmpdir(), `enth_test_${Date.now()}_${Math.random().toString(36).slice(2)}.enth`);
+  const path = join(tmpdir(), `speq_test_${Date.now()}_${Math.random().toString(36).slice(2)}.speq`);
   writeFileSync(path, content);
   try {
     fn(path);

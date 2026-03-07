@@ -1,8 +1,8 @@
-# Contributing to enthropic-tools
+# Contributing to speq-tools
 
 ## Before You Start
 
-Read the [Enthropic Specification](https://github.com/enthropic-spec/enthropic) first.
+Read the [SpeQ Specification](https://github.com/speq-ai/speq) first.
 The CLI is a direct implementation of that spec. Changes to behavior must be grounded in the spec — not convenience or personal preference.
 
 ## What We Welcome
@@ -18,13 +18,13 @@ The CLI is a direct implementation of that spec. Changes to behavior must be gro
 - New features that are not in the spec (open a spec issue first)
 - Dependency additions without strong justification
 - Style-only changes
-- Breaking changes to the `.enth` format without a spec update
+- Breaking changes to the `.speq` format without a spec update
 
 ## Development Setup
 
 ```bash
-git clone https://github.com/enthropic-spec/enthropic-tools
-cd enthropic-tools
+git clone https://github.com/speq-ai/speq-tools
+cd speq-tools
 npm install
 npm run build
 npm run typecheck
@@ -48,4 +48,4 @@ npm run lint
 
 ## Questions
 
-Open a [Discussion](https://github.com/enthropic-spec/enthropic-tools/discussions) rather than an issue for questions.
+Open a [Discussion](https://github.com/speq-ai/speq-tools/discussions) rather than an issue for questions.

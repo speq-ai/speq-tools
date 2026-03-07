@@ -1,7 +1,7 @@
 VERSION 1.0.0
 
-PROJECT enthropic-tools
-  NAME   "enthropic"
+PROJECT speq-tools
+  NAME   "speq"
   STACK  typescript, node, commander, inquirer, ora, noble-ciphers, bun
   ARCH   layered
   LANG   typescript
@@ -11,21 +11,21 @@ PROJECT enthropic-tools
     DEV      typescript, @types/node, eslint, @typescript-eslint/eslint-plugin, bun
 
 CONTEXT
-  DESCRIPTION "CLI companion for the Enthropic spec format. Interactive TUI for spec-driven development: AI-assisted spec creation, validation, build state tracking, and context generation."
+  DESCRIPTION "CLI companion for the SpeQ spec format. Interactive TUI for spec-driven development: AI-assisted spec creation, validation, build state tracking, and context generation."
 
 VOCABULARY
-  EnthSpec          # never: spec, parsed_spec, enth
+  SpeqSpec          # never: spec, parsed_spec, enth
   ValidationError   # never: error, err, validation_err
   ProjectState      # never: state, build_state, progress
   GlobalConfig      # never: config, settings, prefs, cfg
   AiSession         # never: chat, conversation, session
 
-ENTITY enth_spec, validation_error, project_state, global_config, ai_session
+ENTITY speq_spec, validation_error, project_state, global_config, ai_session
 
 TRANSFORM
-  enth_spec     -> validation_error : validate
-  enth_spec     -> project_state    : generate
-  enth_spec     -> ai_session       : build_context
+  speq_spec     -> validation_error : validate
+  speq_spec     -> project_state    : generate
+  speq_spec     -> ai_session       : build_context
   global_config -> ai_session       : configure
 
 LAYERS
@@ -56,7 +56,7 @@ LAYERS
 
 CONTRACTS
   global_config.*    NEVER    api_key_in_plaintext
-  ai_session.*       REQUIRES valid_enth_spec
+  ai_session.*       REQUIRES valid_speq_spec
   validation_error.* ALWAYS   includes_rule_number
   project_state.*    NEVER    overwrite_built_entity
 
@@ -70,19 +70,19 @@ CONTRACTS
     TIMEOUT 60s
 
   FLOW new_project
-    1. enth_spec.collect_name
-    2. enth_spec.collect_stack
-    3. enth_spec.collect_entities
-    4. enth_spec.collect_layers
-    5. enth_spec.write_file
+    1. speq_spec.collect_name
+    2. speq_spec.collect_stack
+    3. speq_spec.collect_entities
+    4. speq_spec.collect_layers
+    5. speq_spec.write_file
     6. validation_error.validate
     7. project_state.generate
-    ROLLBACK  enth_spec.delete_partial_file
+    ROLLBACK  speq_spec.delete_partial_file
     ATOMIC    false
     TIMEOUT   120s
 
   FLOW build_session
-    1. enth_spec.load
+    1. speq_spec.load
     2. project_state.load
     3. ai_session.build_context
     4. ai_session.send_system_prompt
