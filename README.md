@@ -29,6 +29,10 @@ The CLI validates your spec, tracks build progress, and produces the context blo
   </a>
 </p>
 
+```sh
+npm install -g @speq-ai/speq
+```
+
 Requires Node.js 20+. No telemetry.
 
 <p align="center">
